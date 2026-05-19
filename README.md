@@ -41,7 +41,7 @@ Clone this repository into your ComfyUI custom nodes directory:
 
 ```bash
 cd ComfyUI/custom_nodes
-git clone https://github.com/YOUR_GITHUB_USERNAME/antimatter-nodes.git
+git clone https://github.com/AntiMatterComfy/antimatter-nodes.git
 ```
 
 Restart ComfyUI after installing.

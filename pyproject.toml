@@ -9,8 +9,8 @@ classifiers = [
 ]
 
 [project.urls]
-Repository = "https://github.com/YOUR_GITHUB_USERNAME/antimatter-nodes"
-Issues = "https://github.com/YOUR_GITHUB_USERNAME/antimatter-nodes/issues"
+Repository = "https://github.com/AntiMatterComfy/antimatter-nodes"
+Issues = "https://github.com/AntiMatterComfy/antimatter-nodes/issues"
 
 [tool.comfy]
 PublisherId = "antimatter"
