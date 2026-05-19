@@ -46,7 +46,7 @@ def _apply_orientation(width: int, height: int, mode: str) -> tuple[int, int]:
 
 
 class AntiAspectRatioMaster:
-    """Create an empty SDXL latent with quick aspect ratio and resolution switching."""
+    """Create an empty latent with quick aspect ratio and resolution switching."""
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -59,6 +59,7 @@ class AntiAspectRatioMaster:
                 "round_to": ("INT", {"default": 64, "min": 1, "max": 256}),
                 "orientation": (["auto", "portrait", "landscape", "swap"], {"default": "auto"}),
                 "batch_size": ("INT", {"default": 1, "min": 1, "max": 64}),
+                "latent_channels": ("INT", {"default": 16, "min": 1, "max": 64}),
             },
             "optional": {
                 "image": ("IMAGE",),
@@ -80,6 +81,7 @@ class AntiAspectRatioMaster:
         round_to: int,
         orientation: str,
         batch_size: int,
+        latent_channels: int = 16,
         image=None,
         downsample_factor: int = 8,
     ):
@@ -113,7 +115,11 @@ class AntiAspectRatioMaster:
         factor = max(1, int(downsample_factor))
         latent_height = max(1, height // factor)
         latent_width = max(1, width // factor)
-        samples = torch.zeros((batch_size, 4, latent_height, latent_width), dtype=torch.float32, device="cpu")
+        samples = torch.zeros(
+            (batch_size, int(latent_channels), latent_height, latent_width),
+            dtype=torch.float32,
+            device="cpu",
+        )
         latent = {"samples": samples}
 
         final_preset = f"{width}x{height}"

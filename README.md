@@ -14,18 +14,19 @@ AntiMatter/Image/Anti_aspect_ratio_master
 
 ### Anti_aspect_ratio_master
 
-Creates an empty SDXL-compatible latent using a preset, manual dimensions, or an input image size. It also returns the final width, height, final preset string, and detected image name.
+Creates an empty latent using Flux, Z-Image, and ERNIE-oriented presets, manual dimensions, or an input image size. It also returns the final width, height, final preset string, and detected image name.
 
 Inputs:
 
 - `source`: `from_preset`, `from_manual`, or `from_image`
-- `preset`: SDXL-oriented width x height presets
+- `preset`: Flux, Z-Image, and ERNIE-oriented width x height presets
 - `manual_width`, `manual_height`: manual dimensions when `source` is `from_manual`
 - `round_to`: rounds dimensions to a selected multiple
 - `orientation`: `auto`, `portrait`, `landscape`, or `swap`
 - `batch_size`: latent batch size
+- `latent_channels`: latent channel count, default `16` for Flux, Z-Image, and ERNIE-style workflows
 - `image`: optional image source for dimensions
-- `downsample_factor`: latent downsample factor, usually `8` for SDXL
+- `downsample_factor`: latent downsample factor, usually `8` for VAE latent workflows
 
 Outputs:
 

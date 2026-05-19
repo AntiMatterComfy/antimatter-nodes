@@ -1,3 +1,3 @@
 {
-  "Anti_aspect_ratio_master": "Creates an empty SDXL-compatible latent with preset, manual, or image-derived dimensions."
+  "Anti_aspect_ratio_master": "Creates an empty latent with Flux, Z-Image, and ERNIE-oriented presets plus manual or image-derived dimensions."
 }

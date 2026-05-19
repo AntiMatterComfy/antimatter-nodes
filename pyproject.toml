@@ -1,7 +1,7 @@
 [project]
 name = "antimatter-nodes"
-version = "0.1.0"
-description = "AntiMatter custom nodes for ComfyUI."
+version = "0.1.1"
+description = "AntiMatter custom nodes for ComfyUI, including Flux, Z-Image, and ERNIE-oriented aspect ratio tools."
 requires-python = ">=3.10"
 dependencies = []
 classifiers = [
