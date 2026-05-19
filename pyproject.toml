@@ -1,0 +1,17 @@
+[project]
+name = "antimatter-nodes"
+version = "0.1.0"
+description = "AntiMatter custom nodes for ComfyUI."
+requires-python = ">=3.10"
+dependencies = []
+classifiers = [
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Repository = "https://github.com/YOUR_GITHUB_USERNAME/antimatter-nodes"
+Issues = "https://github.com/YOUR_GITHUB_USERNAME/antimatter-nodes/issues"
+
+[tool.comfy]
+PublisherId = "antimatter"
+DisplayName = "AntiMatter Nodes"
