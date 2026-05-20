@@ -1,3 +1,4 @@
 {
-  "Anti_aspect_ratio_master": "Creates an empty latent with Flux, Z-Image, and ERNIE-oriented presets plus manual or image-derived dimensions."
+  "Anti_aspect_ratio_master": "Creates an empty latent with Flux, Z-Image, and ERNIE-oriented presets plus manual or image-derived dimensions.",
+  "Batch_Loader_From_Folder": "Loads image batches directly from a local folder with random, sequential, freeze, skip, preview, and move-to-processed controls."
 }
