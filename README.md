@@ -5,13 +5,19 @@ AntiMatter is a ComfyUI custom node collection for practical image workflows.
 ## Nodes
 
 - `Anti_aspect_ratio_master`
+- `Antimatter Text File Appender`
 - `Batch Loader from folder`
+- `LinePrompt_MasterLoad`
+- `LinePrompt_MasterLoad_JSON`
 
 Node tree:
 
 ```text
 AntiMatter/Image/Anti_aspect_ratio_master
+AntiMatter/Text/Antimatter Text File Appender
 AntiMatter/Image/Batch Loader from folder
+AntiMatter/Text/LinePrompt_MasterLoad
+AntiMatter/Text/LinePrompt_MasterLoad_JSON
 ```
 
 ## Anti_aspect_ratio_master
@@ -37,6 +43,32 @@ Outputs:
 - `height`
 - `final_preset`
 - `image_name`
+
+## Antimatter Text File Appender
+
+Saves incoming text to `.txt` or `.json` files. It can append normally, or replace a specific scene when a scene name/number is connected.
+
+Inputs:
+
+- `text`: manual text/string to save.
+- `text_input`: optional connected string input. If connected, this is saved instead of `text`.
+- `scene_name`: optional scene number/name for replacement workflows. Accepts values like `35`, `scene-035`, or `scene_35`.
+- `directory`: folder path on any disk.
+- `filename`: output file name. If no extension is provided, the node adds `.txt` or `.json`.
+- `file_format`: `txt` or `json`.
+- `prefix`: optional prefix added before every saved text.
+- `blank_lines_between_entries`: spacing between appended `.txt` entries.
+- `index_start`, `index_padding`: controls `{index}` and `{counter}` prefix placeholders.
+- `json_indent`: pretty-print indent for `.json`; set `0` for compact JSON.
+
+Outputs:
+
+- `saved_text`
+- `file_path`
+
+Scene replacement:
+
+Connect `Scene Name` from `LinePrompt_MasterLoad_JSON` to `scene_name` when manually regenerating a scene. For `.json`, the node replaces a record with the same `scene_name` or `index`. For `.txt`, it replaces the block containing that scene marker; if no marker is found, it replaces the N-th text block.
 
 ## Batch Loader from folder
 
@@ -97,6 +129,47 @@ Outputs:
 - `format`: selected file extension, or a comma-separated list for mixed batches.
 - `width`: output image width.
 - `height`: output image height.
+
+## LinePrompt_MasterLoad
+
+Loads prompt lines from `.txt` files. It supports manual text prefixing, selectable style files, sequential/random/reverse reading, freeze count, delimiter handling, and preview updates.
+
+Inputs:
+
+- `enabled`: when disabled, returns an empty string.
+- `input_text`: optional prefix added before the selected line as `input_text, selected_line`.
+- `text_file`: manual path to a `.txt` file.
+- `style_file`: dropdown populated from the configured styles folder.
+- `lines_to_take`: selects 1, 2, or 3 consecutive lines.
+- `read_mode`: `sequential`, `random`, or `from_end`.
+- `freeze_iterations`: keeps the selected line for N queue runs.
+- `delimiter`: appends `,`, `/`, `.`, or `;` to the selected line if missing.
+
+Outputs:
+
+- `text`
+
+The ComfyUI setting `LinePrompt_MasterLoad styles txt folder` controls the parent folder scanned recursively for `style_file`.
+
+## LinePrompt_MasterLoad_JSON
+
+Loads scene prompts from JSON. It is designed for scene-based generation where manual rework should use the current scene number/name.
+
+Inputs:
+
+- `json_input`: optional connected JSON/string input.
+- `enabled`: when disabled, returns empty strings.
+- `json_text`: manual JSON content.
+- `json_file`: path to a JSON file.
+- `scene_mode`: `sequential` or `manual`.
+- `manual_scene`: scene number used in manual mode.
+- `repeat_each_scene`: number of queue runs per scene.
+- `after_last_scene`: `stop_empty` or `loop`.
+
+Outputs:
+
+- `prompt`
+- `Scene Name`
 
 ## Manual Install
 
