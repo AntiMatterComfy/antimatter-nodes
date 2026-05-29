@@ -1,4 +1,7 @@
 {
   "Anti_aspect_ratio_master": "Creates an empty latent with Flux, Z-Image, and ERNIE-oriented presets plus manual or image-derived dimensions.",
-  "Batch_Loader_From_Folder": "Loads image batches directly from a local folder with random, sequential, freeze, skip, preview, and move-to-processed controls."
+  "Antimatter_TextFileAppender": "Saves text to TXT or JSON with append mode and scene-aware replacement for manual rework workflows.",
+  "Batch_Loader_From_Folder": "Loads image batches directly from a local folder with random, sequential, freeze, skip, preview, and move-to-processed controls.",
+  "LinePrompt_MasterLoad": "Loads prompt lines from TXT files with sequential, random, reverse, freeze, prefix, delimiter, preview, and style-folder controls.",
+  "LinePrompt_MasterLoad_JSON": "Loads scene prompts from JSON files with sequential or manual scene selection and a Scene Name output for file naming."
 }
