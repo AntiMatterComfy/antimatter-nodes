@@ -4,7 +4,8 @@ import { ComfyWidgets } from "../../../scripts/widgets.js";
 
 const SETTINGS_ID = "LinePrompt_MasterLoad.StylesRoot";
 const DEFAULT_STYLES_ROOT = "custom_nodes/Style_evo/styles";
-const TARGET_CLASSES = new Set(["LinePrompt_MasterLoad", "LinePrompt_MasterLoad_JSON"]);
+const JSON_SCENE_CLASSES = new Set(["LinePrompt_MasterLoad_JSON", "LinePrompt_MasterLoad_JSON_Image"]);
+const TARGET_CLASSES = new Set(["LinePrompt_MasterLoad", ...JSON_SCENE_CLASSES]);
 let styleFilesPromise = null;
 
 function chainCallback(object, property, callback) {
@@ -40,18 +41,24 @@ async function getStyleFiles() {
 	return styleFilesPromise;
 }
 
-async function refreshStyleFileWidget(node) {
-	const widget = node.widgets?.find((w) => w.name === "style_file");
-	if (!widget) return;
+function isStyleFileWidget(widget) {
+	return widget?.name === "style_file" || /^style_file_\d+$/.test(widget?.name || "");
+}
+
+async function refreshStyleFileWidgets(node) {
+	const widgets = node.widgets?.filter(isStyleFileWidget) || [];
+	if (!widgets.length) return;
 
 	const files = await getStyleFiles();
-	const currentValue = widget.value;
-	const values = currentValue && !files.includes(currentValue) ? [currentValue, ...files] : files;
+	for (const widget of widgets) {
+		const currentValue = widget.value;
+		const values = currentValue && !files.includes(currentValue) ? [currentValue, ...files] : files;
 
-	widget.options = widget.options || {};
-	widget.options.values = values;
-	if (!values.includes(widget.value)) {
-		widget.value = values[0] || "none";
+		widget.options = widget.options || {};
+		widget.options.values = values;
+		if (!values.includes(widget.value)) {
+			widget.value = values[0] || "none";
+		}
 	}
 
 	app.graph.setDirtyCanvas(true, false);
@@ -61,7 +68,7 @@ function refreshAllStyleFileWidgets() {
 	styleFilesPromise = null;
 	for (const node of app.graph?._nodes || []) {
 		if (TARGET_CLASSES.has(node.comfyClass)) {
-			refreshStyleFileWidget(node);
+			refreshStyleFileWidgets(node);
 		}
 	}
 }
@@ -78,10 +85,18 @@ function removeButtonWidget(node, name) {
 function bumpNavWidget(node, delta) {
 	const sceneModeWidget = node.widgets?.find((w) => w.name === "scene_mode");
 	const manualSceneWidget = node.widgets?.find((w) => w.name === "manual_scene");
-	if (node.comfyClass === "LinePrompt_MasterLoad_JSON" && sceneModeWidget?.value === "manual" && manualSceneWidget) {
+	const rowWidget = node.widgets?.find((w) => w.name === "row");
+	if (JSON_SCENE_CLASSES.has(node.comfyClass) && sceneModeWidget?.value === "manual" && manualSceneWidget) {
 		const currentScene = Number(manualSceneWidget.value || 1);
 		manualSceneWidget.value = Math.max(1, currentScene + delta);
 		manualSceneWidget.callback?.(manualSceneWidget.value);
+		app.graph.setDirtyCanvas(true, true);
+		return;
+	}
+	if (JSON_SCENE_CLASSES.has(node.comfyClass) && sceneModeWidget?.value === "row" && rowWidget) {
+		const currentRow = Number(rowWidget.value || 1);
+		rowWidget.value = Math.max(1, currentRow + delta);
+		rowWidget.callback?.(rowWidget.value);
 		app.graph.setDirtyCanvas(true, true);
 		return;
 	}
@@ -133,7 +148,7 @@ function setupLinePromptUI(node) {
 
 	node._lpml_previewWidget = previewWidget;
 	node._lpml_titleBase = node._lpml_titleBase || node.title;
-	refreshStyleFileWidget(node);
+	refreshStyleFileWidgets(node);
 }
 
 app.registerExtension({

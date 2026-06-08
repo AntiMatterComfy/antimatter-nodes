@@ -1,7 +1,7 @@
 [project]
 name = "antimatter-nodes"
 version = "0.3.0"
-description = "AntiMatter custom nodes for ComfyUI, including aspect ratio, folder batch loading, prompt loading, and text appending tools."
+description = "AntiMatter custom nodes for ComfyUI, including aspect ratio, image/video loading and saving, LM Studio local API agents, prompt loading, and text appending tools."
 requires-python = ">=3.10"
 dependencies = []
 classifiers = [
