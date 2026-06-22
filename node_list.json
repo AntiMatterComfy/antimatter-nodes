@@ -10,5 +10,10 @@
   "LinePrompt_MasterLoad_JSON": "Loads scene prompts from JSON files with sequential, manual, or direct row selection and a Scene Name output for file naming.",
   "LinePrompt_MasterLoad_JSON_Image": "Loads scene prompts from JSON and the matching scene image from a folder by scene number, with sequential, manual, row, and interval modes.",
   "LMStudioThreeImageAgent": "Calls a local LM Studio OpenAI-compatible API with up to three image inputs and saves the text response plus request/response JSON.",
-  "LMStudioMultiInputSettingsAgent": "Multi-route LM Studio agent with three optional image inputs, five text placeholders, per-route system/user prompts, project JSON saving, and combined text output."
+  "LMStudioMultiInputSettingsAgent": "Multi-route LM Studio agent with three optional image inputs, five text placeholders, per-route system/user prompts, project JSON saving, and combined text output.",
+  "AntimatterLtxDirectorX": "LTX timeline director with shot ranges, retry-fragment rendering, prompt-agent fields, JoyCaption input, audio metadata, and edit-decision outputs.",
+  "AntimatterLtxDirectorXPro": "Advanced LTX director with an integrated LoRA rack, camera controls, project editor, preview tools, and camera-track JSON.",
+  "AntimatterLtxDirectorXOneNode": "All-in-one LTX two-stage generation, latent upscale, decode, preview, and final-video pipeline.",
+  "AntimatterLtxFragmentStitchX": "Replaces or inserts regenerated frame ranges into an existing frame batch.",
+  "AntimatterLtxAudioTrackX": "Extracts, removes, or trims AUDIO by a selected frame range."
 }

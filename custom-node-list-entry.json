@@ -6,5 +6,5 @@
     "https://github.com/AntiMatterComfy/antimatter-nodes"
   ],
   "install_type": "git-clone",
-  "description": "AntiMatter custom nodes for ComfyUI. Includes aspect ratio tools, image/video folder batch loading and saving, prompt line/JSON scene loaders, JSON scene-image matching, LM Studio local API prompt agents, and a text file appender with scene-aware replacement."
+  "description": "AntiMatter custom nodes for ComfyUI. Includes LTX timeline direction and fragment tools, aspect ratio tools, image/video batch loading and saving, prompt/JSON loaders, LM Studio agents, and text utilities."
 }

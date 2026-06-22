@@ -122,6 +122,24 @@ def _format_prefix(prefix_template: str, index: int, index_padding: int) -> str:
     )
 
 
+def _clean_json_text_and_index(raw_text: str, fallback_index: int) -> tuple[int, str]:
+    text = _as_text(raw_text).replace("\r\n", "\n").replace("\r", "\n").strip()
+    lines = text.split("\n")
+    while lines and lines[0].strip().lower().startswith("source:"):
+        lines.pop(0)
+    text = "\n".join(lines).strip()
+
+    if not re.search(r"(?m)\n\s*\d{1,6}\s*[.)]\s*(?:\[[^\]]+\]\s*)?", text):
+        match = re.match(r"^\s*(\d{1,6})\s*[.)]\s*(\[[^\]]+\]\s*)?(.*)\s*$", text, flags=re.S)
+        if match:
+            fallback_index = int(match.group(1))
+            timecode = match.group(2) or ""
+            description = match.group(3) or ""
+            text = f"{timecode}{description}".strip()
+
+    return fallback_index, text
+
+
 def _append_txt(file_path: Path, saved_text: str, blank_lines_between_entries: int) -> None:
     has_existing_text = file_path.exists() and file_path.stat().st_size > 0
     separator = "\n" * (max(0, int(blank_lines_between_entries)) + 1)
@@ -146,6 +164,13 @@ def _write_json_records(file_path: Path, records: list, json_indent: int) -> Non
 
 def _append_json(file_path: Path, record: dict, json_indent: int) -> None:
     records = _load_json_records(file_path)
+    record_index = record.get("index") if isinstance(record, dict) else None
+    if isinstance(record_index, int):
+        for i, existing_record in enumerate(records):
+            if isinstance(existing_record, dict) and existing_record.get("index") == record_index:
+                records[i] = record
+                _write_json_records(file_path, records, json_indent)
+                return
     records.append(record)
     _write_json_records(file_path, records, json_indent)
 
@@ -331,15 +356,12 @@ class AntimatterTextFileAppender:
             saved_text = f"{rendered_prefix}{raw_text}"
 
             if file_format == "json":
+                json_index, json_text = _clean_json_text_and_index(raw_text, index)
                 record = {
-                    "timestamp": datetime.now().isoformat(timespec="seconds"),
-                    "index": index,
-                    "prefix": rendered_prefix,
-                    "text": raw_text,
-                    "saved_text": saved_text,
+                    "index": json_index,
+                    "text": json_text,
                 }
                 if scene_name_text:
-                    record["scene_name"] = _normalize_scene_name(scene_name_text)
                     _upsert_json_by_scene(file_path, record, scene_name_text, int(json_indent))
                 else:
                     _append_json(file_path, record, int(json_indent))

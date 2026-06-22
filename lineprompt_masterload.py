@@ -27,6 +27,7 @@ _COMMENT_PREFIXES = ("#", "//")
 _JSON_PROMPT_KEYS = ("prompt", "image_prompt", "positive", "text", "description")
 _JSON_SCENE_ID_KEYS = ("scene", "scene_id", "id", "name", "title", "row", "row_id", "row_number", "index")
 _JSON_SCENE_LIST_KEYS = ("scenes", "scene_prompts", "items", "data")
+_JSON_FILE_EXTS = (".json",)
 _IMAGE_EXTS = (".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tiff", ".tif")
 _SCENE_RE = re.compile(r"(?:^|[^0-9a-z])scene[\s_-]*(\d+)(?=$|[^0-9])", re.IGNORECASE)
 _DIGIT_RE = re.compile(r"(\d+)")
@@ -198,6 +199,36 @@ def _source_key_from_file(path: str) -> str:
         return f"file:missing:{os.path.abspath(p)}"
 
 
+def _resolve_json_file_path(path: str) -> Tuple[str, Optional[str]]:
+    p = _normalize_txt_path(path)
+    if not p:
+        return "", "no_file_path"
+    if not os.path.exists(p):
+        return p, None
+    if not os.path.isdir(p):
+        return p, None
+
+    try:
+        json_files = [
+            os.path.join(p, filename)
+            for filename in os.listdir(p)
+            if os.path.splitext(filename)[1].lower() in _JSON_FILE_EXTS
+            and os.path.isfile(os.path.join(p, filename))
+        ]
+    except Exception as e:
+        return p, f"read_error: {type(e).__name__}"
+
+    json_files.sort(key=lambda item: item.lower())
+    if not json_files:
+        return p, f"no_json_files_in_folder: {p}"
+    if len(json_files) > 1:
+        names = ", ".join(os.path.basename(item) for item in json_files[:5])
+        if len(json_files) > 5:
+            names += ", ..."
+        return p, f"multiple_json_files_in_folder: {p} ({names})"
+    return json_files[0], None
+
+
 def _stable_json_text(value: Any) -> str:
     if isinstance(value, str):
         return value
@@ -339,13 +370,16 @@ def _resolve_json_source(json_input: Any, json_file: str, json_text: str) -> Tup
 
     file_path = str(json_file or "").strip().strip('"').strip("'")
     if file_path:
-        text, error = _read_text_from_file(file_path)
+        resolved_file_path, path_error = _resolve_json_file_path(file_path)
+        if path_error:
+            return [], _source_key_from_file(resolved_file_path or file_path), path_error
+        text, error = _read_text_from_file(resolved_file_path)
         if error:
-            return [], _source_key_from_file(file_path), error
+            return [], _source_key_from_file(resolved_file_path), error
         data, parse_error = _parse_json_value(text)
         if parse_error:
-            return [], _source_key_from_file(file_path), parse_error
-        return _extract_scenes_from_json(data), _source_key_from_file(file_path), None
+            return [], _source_key_from_file(resolved_file_path), parse_error
+        return _extract_scenes_from_json(data), _source_key_from_file(resolved_file_path), None
 
     data, error = _parse_json_value(json_text)
     if error:

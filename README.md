@@ -14,6 +14,11 @@ AntiMatter is a ComfyUI custom node collection for practical image workflows.
 - `LinePrompt_MasterLoad_JSON_Image`
 - `LM Studio 3 Image Agent`
 - `LM Studio Multi Input Settings Agent`
+- `AntiMatter LTX Director X`
+- `AntiMatter LTX Director X Pro`
+- `AntiMatter LTX Director X One Node`
+- `AntiMatter LTX Fragment Stitch X`
+- `AntiMatter LTX Audio Track X`
 
 Node tree:
 
@@ -28,6 +33,11 @@ AntiMatter/Text/LinePrompt_MasterLoad_JSON
 AntiMatter/Text/LinePrompt_MasterLoad_JSON_Image
 AntiMatter/LM Studio/LM Studio 3 Image Agent
 AntiMatter/LM Studio/LM Studio Multi Input Settings Agent
+AntiMatter/LTX/AntiMatter LTX Director X
+AntiMatter/LTX Pro/AntiMatter LTX Director X Pro
+AntiMatter/LTX Pro/AntiMatter LTX Director X One Node
+AntiMatter/LTX/AntiMatter LTX Fragment Stitch X
+AntiMatter/LTX/AntiMatter LTX Audio Track X
 ```
 
 ## Anti_aspect_ratio_master
@@ -363,6 +373,18 @@ Outputs:
 - `input_text_output`
 - `json_project_dir`
 - `combined_text`: every non-empty route output joined in execution order, useful for sending the final text onward to Flux prompt chains.
+
+## AntiMatter LTX Director X
+
+Five LTX workflow nodes are bundled under the same AntiMatter package:
+
+- `AntiMatter LTX Director X`: timeline ranges, retry-fragment rendering, prompt-agent fields, JoyCaption input, audio-lane metadata, and edit-decision outputs.
+- `AntiMatter LTX Director X Pro`: a resizable editor with preview, timeline, LoRA rack, camera controls, gallery assets, project settings, and camera-track JSON.
+- `AntiMatter LTX Director X One Node`: runs the two-stage LTX generation, latent upscale, decode, live preview, and final-video outputs inside one node.
+- `AntiMatter LTX Fragment Stitch X`: replaces or inserts regenerated frames in an existing frame batch.
+- `AntiMatter LTX Audio Track X`: extracts, removes, or trims audio by frame range.
+
+The LTX nodes preserve their original workflow class IDs, so workflows made with the standalone `Antimatter_Ltx_Director_X` package can resolve the same nodes after switching to this combined repository. Remove or disable the standalone copy after installing the combined pack to avoid duplicate node registration.
 
 ## Manual Install
 

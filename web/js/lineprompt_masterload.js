@@ -6,6 +6,16 @@ const SETTINGS_ID = "LinePrompt_MasterLoad.StylesRoot";
 const DEFAULT_STYLES_ROOT = "custom_nodes/Style_evo/styles";
 const JSON_SCENE_CLASSES = new Set(["LinePrompt_MasterLoad_JSON", "LinePrompt_MasterLoad_JSON_Image"]);
 const TARGET_CLASSES = new Set(["LinePrompt_MasterLoad", ...JSON_SCENE_CLASSES]);
+const INT_WIDGETS = {
+	lines_to_take: { fallback: 1, min: 1, max: 3 },
+	freeze_iterations: { fallback: 0, min: 0, max: 100000 },
+	manual_scene: { fallback: 1, min: 1, max: 100000 },
+	interval_from_scene: { fallback: 1, min: 1, max: 100000 },
+	interval_to_scene: { fallback: 1, min: 1, max: 100000 },
+	repeat_each_scene: { fallback: 1, min: 1, max: 100000 },
+	nav: { fallback: 0, min: -2147483648, max: 2147483647 },
+	row: { fallback: 1, min: 1, max: 100000 },
+};
 let styleFilesPromise = null;
 
 function chainCallback(object, property, callback) {
@@ -23,6 +33,51 @@ function hideWidget(widget) {
 	const originalComputeSize = widget.computeSize;
 	widget.computeSize = () => [0, -4];
 	widget._lpml_originalComputeSize = originalComputeSize;
+}
+
+function toFiniteInteger(value, { fallback, min, max }) {
+	if (value && typeof value === "object" && "__value__" in value) {
+		value = value.__value__;
+	}
+
+	const numericValue = Number(value);
+	const finiteValue = Number.isFinite(numericValue) ? numericValue : fallback;
+	return Math.min(max, Math.max(min, Math.trunc(finiteValue)));
+}
+
+function sanitizeIntegerWidget(widget, config) {
+	if (!widget || !config) return;
+
+	if (!widget._lpml_integerSanitized) {
+		const originalSerializeValue = widget.serializeValue;
+		const originalCallback = widget.callback;
+
+		widget.serializeValue = function () {
+			const rawValue = originalSerializeValue ? originalSerializeValue.apply(this, arguments) : widget.value;
+			const sanitizedValue = toFiniteInteger(rawValue, config);
+			widget.value = sanitizedValue;
+			return sanitizedValue;
+		};
+
+		if (originalCallback) {
+			widget.callback = function (value, ...rest) {
+				const sanitizedValue = toFiniteInteger(value, config);
+				widget.value = sanitizedValue;
+				return originalCallback.apply(this, [sanitizedValue, ...rest]);
+			};
+		}
+
+		widget._lpml_integerSanitized = true;
+	}
+
+	widget.value = toFiniteInteger(widget.value, config);
+}
+
+function sanitizeIntegerWidgets(node) {
+	if (!TARGET_CLASSES.has(node?.comfyClass)) return;
+	for (const widget of node.widgets || []) {
+		sanitizeIntegerWidget(widget, INT_WIDGETS[widget.name]);
+	}
 }
 
 function getStylesRoot() {
@@ -87,14 +142,14 @@ function bumpNavWidget(node, delta) {
 	const manualSceneWidget = node.widgets?.find((w) => w.name === "manual_scene");
 	const rowWidget = node.widgets?.find((w) => w.name === "row");
 	if (JSON_SCENE_CLASSES.has(node.comfyClass) && sceneModeWidget?.value === "manual" && manualSceneWidget) {
-		const currentScene = Number(manualSceneWidget.value || 1);
+		const currentScene = toFiniteInteger(manualSceneWidget.value, INT_WIDGETS.manual_scene);
 		manualSceneWidget.value = Math.max(1, currentScene + delta);
 		manualSceneWidget.callback?.(manualSceneWidget.value);
 		app.graph.setDirtyCanvas(true, true);
 		return;
 	}
 	if (JSON_SCENE_CLASSES.has(node.comfyClass) && sceneModeWidget?.value === "row" && rowWidget) {
-		const currentRow = Number(rowWidget.value || 1);
+		const currentRow = toFiniteInteger(rowWidget.value, INT_WIDGETS.row);
 		rowWidget.value = Math.max(1, currentRow + delta);
 		rowWidget.callback?.(rowWidget.value);
 		app.graph.setDirtyCanvas(true, true);
@@ -104,8 +159,8 @@ function bumpNavWidget(node, delta) {
 	const navWidget = node.widgets?.find((w) => w.name === "nav");
 	if (!navWidget) return;
 
-	const current = Number(navWidget.value || 0);
-	navWidget.value = current + delta;
+	const current = toFiniteInteger(navWidget.value, INT_WIDGETS.nav);
+	navWidget.value = toFiniteInteger(current + delta, INT_WIDGETS.nav);
 	navWidget.callback?.(navWidget.value);
 	app.graph.setDirtyCanvas(true, true);
 }
@@ -120,6 +175,8 @@ function addButtonWidget(node, name, label, delta) {
 
 function setupLinePromptUI(node) {
 	if (!node) return;
+
+	sanitizeIntegerWidgets(node);
 
 	// Hide internal navigation counter widget (used by buttons)
 	const navWidget = node.widgets?.find((w) => w.name === "nav");
