@@ -32,6 +32,7 @@ _MODE_MAP = {
 _JSON_SCENE_MODE_MAP = {
     "sequential": "sequential",
     "manual": "manual",
+    "row": "row",
 }
 
 _JSON_AFTER_LAST_MAP = {
@@ -499,11 +500,12 @@ class LinePrompt_MasterLoad_JSON:
                 "enabled": ("BOOLEAN", {"default": True}),
                 "json_text": ("STRING", {"default": "", "multiline": True}),
                 "json_file": ("STRING", {"default": ""}),
-                "scene_mode": (["sequential", "manual"], {"default": "sequential"}),
+                "scene_mode": (["sequential", "manual", "row"], {"default": "sequential"}),
                 "manual_scene": ("INT", {"default": 1, "min": 1, "max": 100000, "step": 1}),
                 "repeat_each_scene": ("INT", {"default": 1, "min": 1, "max": 100000, "step": 1}),
                 "after_last_scene": (["stop_empty", "loop"], {"default": "stop_empty"}),
                 "nav": ("INT", {"default": 0, "min": -2147483648, "max": 2147483647, "step": 1}),
+                "row": ("INT", {"default": 1, "min": 1, "max": 100000, "step": 1}),
             },
             "optional": {
                 "json_input": (any_type,),
@@ -533,6 +535,7 @@ class LinePrompt_MasterLoad_JSON:
         _clamp_int(kwargs.get("manual_scene", 1), 1, 100000)
         _clamp_int(kwargs.get("repeat_each_scene", 1), 1, 100000)
         _clamp_int(kwargs.get("nav", 0), -2147483648, 2147483647)
+        _clamp_int(kwargs.get("row", 1), 1, 100000)
         return True
 
     def load(
@@ -545,6 +548,7 @@ class LinePrompt_MasterLoad_JSON:
         repeat_each_scene: int,
         after_last_scene: str,
         nav: int,
+        row: int = 1,
         unique_id: Optional[str] = None,
         json_input: Any = None,
     ):
@@ -565,6 +569,12 @@ class LinePrompt_MasterLoad_JSON:
             idx = _clamp_int(manual_scene, 1, len(scenes)) - 1
             scene_id, prompt = scenes[idx]
             status = f"{scene_id} {idx + 1}/{len(scenes)} MANUAL"
+            return {"ui": {"preview": (prompt,), "status": (status,)}, "result": (prompt, scene_id)}
+
+        if scene_mode_key == "row":
+            idx = _clamp_int(row, 1, len(scenes)) - 1
+            scene_id, prompt = scenes[idx]
+            status = f"{scene_id} row {idx + 1}/{len(scenes)}"
             return {"ui": {"preview": (prompt,), "status": (status,)}, "result": (prompt, scene_id)}
 
         state = _JSON_STATE.get(uid)

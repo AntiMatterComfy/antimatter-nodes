@@ -78,10 +78,18 @@ function removeButtonWidget(node, name) {
 function bumpNavWidget(node, delta) {
 	const sceneModeWidget = node.widgets?.find((w) => w.name === "scene_mode");
 	const manualSceneWidget = node.widgets?.find((w) => w.name === "manual_scene");
+	const rowWidget = node.widgets?.find((w) => w.name === "row");
 	if (node.comfyClass === "LinePrompt_MasterLoad_JSON" && sceneModeWidget?.value === "manual" && manualSceneWidget) {
 		const currentScene = Number(manualSceneWidget.value || 1);
 		manualSceneWidget.value = Math.max(1, currentScene + delta);
 		manualSceneWidget.callback?.(manualSceneWidget.value);
+		app.graph.setDirtyCanvas(true, true);
+		return;
+	}
+	if (node.comfyClass === "LinePrompt_MasterLoad_JSON" && sceneModeWidget?.value === "row" && rowWidget) {
+		const currentRow = Number(rowWidget.value || 1);
+		rowWidget.value = Math.max(1, currentRow + delta);
+		rowWidget.callback?.(rowWidget.value);
 		app.graph.setDirtyCanvas(true, true);
 		return;
 	}

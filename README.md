@@ -161,8 +161,9 @@ Inputs:
 - `enabled`: when disabled, returns empty strings.
 - `json_text`: manual JSON content.
 - `json_file`: path to a JSON file.
-- `scene_mode`: `sequential` or `manual`.
+- `scene_mode`: `sequential`, `manual`, or `row`.
 - `manual_scene`: scene number used in manual mode.
+- `row`: direct 1-based row selection used in row mode.
 - `repeat_each_scene`: number of queue runs per scene.
 - `after_last_scene`: `stop_empty` or `loop`.
 
