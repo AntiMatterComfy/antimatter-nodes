@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2
+
+- Added AntiMatter Style Preset Mixer, which replaces KREA2_BATCH_WILD's eight-slot style subgraph with editable bundled preset files.
+
 ## 0.4.1
 
 - Added optional proportional image resizing to `Anti_aspect_ratio_master`.
