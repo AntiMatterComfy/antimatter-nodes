@@ -5,6 +5,7 @@ AntiMatter is a ComfyUI custom node collection for practical image workflows.
 ## Nodes
 
 - `Anti_aspect_ratio_master`
+- `AntiMatter Style Preset Mixer`
 - `Antimatter Text File Appender`
 - `Batch Loader from folder`
 - `LinePrompt_MasterLoad`
@@ -14,6 +15,7 @@ Node tree:
 
 ```text
 AntiMatter/Image/Anti_aspect_ratio_master
+AntiMatter/Text/AntiMatter Style Preset Mixer
 AntiMatter/Text/Antimatter Text File Appender
 AntiMatter/Image/Batch Loader from folder
 AntiMatter/Text/LinePrompt_MasterLoad
@@ -49,6 +51,14 @@ Outputs:
 - `final_preset`
 - `image_name`
 - `resized_image`: original image when resizing is disabled; proportionally resized image when enabled
+
+## AntiMatter Style Preset Mixer
+
+This node replaces the eight-slot style subgraph in `KREA2_BATCH_WILD`. Each slot has its own `enabled`, `style_file`, and `read_mode` control, then the enabled selections are combined with optional `input_text` into one prompt string.
+
+The bundled presets are deliberately independent from `Style_evo`; they live in `styles/krea2_batch_wild` inside this node package. Edit a `.txt` file or add folders and `.txt` files there freely. Restart ComfyUI after adding or renaming files so they appear in the dropdowns.
+
+Read modes are `random`, `random_no_repeat`, `sequential`, and `reverse`. The `selected_style_files` output reports the preset files that supplied text during the current execution.
 
 ## Antimatter Text File Appender
 
