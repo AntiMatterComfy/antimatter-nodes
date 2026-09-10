@@ -1,7 +1,7 @@
 [project]
 name = "antimatter-nodes"
-version = "0.4.0"
-description = "AntiMatter custom nodes for ComfyUI, including ACE-Step Music Director, aspect ratio, folder batch loading, prompt loading, and text appending tools."
+version = "0.4.1"
+description = "AntiMatter custom nodes for ComfyUI, including ACE-Step Music Director, aspect ratio, proportional image resizing, folder batch loading, prompt loading, and text appending tools."
 requires-python = ">=3.10"
 dependencies = []
 classifiers = [

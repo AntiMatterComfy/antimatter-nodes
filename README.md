@@ -22,7 +22,7 @@ AntiMatter/Text/LinePrompt_MasterLoad_JSON
 
 ## Anti_aspect_ratio_master
 
-Creates an empty latent using Flux, Z-Image, and ERNIE-oriented presets, manual dimensions, or an input image size. It also returns the final width, height, final preset string, and detected image name.
+Creates an empty latent using Flux, Z-Image, and ERNIE-oriented presets, manual dimensions, or an input image size. It can also resize a connected image with its aspect ratio preserved, and returns the resized image for the next image node.
 
 Inputs:
 
@@ -33,8 +33,13 @@ Inputs:
 - `orientation`: `auto`, `portrait`, `landscape`, or `swap`
 - `batch_size`: latent batch size
 - `latent_channels`: latent channel count, default `16` for Flux, Z-Image, and ERNIE-style workflows
+- `resize_image`: enables proportional resizing of the connected `image`
+- `resize_scale`: signed resize factor. Negative values reduce and positive values enlarge. For example, `-0.7` keeps 70% of the source dimensions, `-2` makes the image twice smaller (50%), and `+2` enlarges it to 200%. `0` is not valid.
+- `upscale_method`: `nearest-exact`, `bilinear`, `area`, `bicubic`, or `lanczos`; this uses the same resize backend as ComfyUI's built-in Image Scale By node
 - `image`: optional image source for dimensions
 - `downsample_factor`: latent downsample factor, usually `8` for VAE latent workflows
+
+When `source` is `from_image` and resizing is enabled, `width`, `height`, and `final_preset` describe the actual resized image dimensions. `round_to` is deliberately not applied in that case, so it cannot distort the original aspect ratio.
 
 Outputs:
 
@@ -43,6 +48,7 @@ Outputs:
 - `height`
 - `final_preset`
 - `image_name`
+- `resized_image`: original image when resizing is disabled; proportionally resized image when enabled
 
 ## Antimatter Text File Appender
 
